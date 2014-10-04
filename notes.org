@@ -19,7 +19,7 @@
    - acpid
      more configurable
      - example: only suspend when using battery on lid-close
-#+SRC_BEGIN bash
+#+BEGIN_SRC bash
     button/lid)
         case "$3" in
             close)
@@ -28,5 +28,9 @@
 		    systemctl suspend
 		fi
 		;;
-#+SRC_END
+#+END_SRC
 ** udev
+   - usb power saving, except usb keyboard
+#+BEGIN_SRC
+ACTION=="add", SUBSYSTEM=="usb", ATTR{product}=="*Key*", ATTR{power/control}="on"
+#+END_SRC
