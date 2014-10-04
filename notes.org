@@ -1,0 +1,32 @@
+#+TITLE: Linux Notes
+
+* git
+
+* keyboard layout
+  - setxkbmap
+  - xorg.conf
+  - tty: use localectl
+
+* networking
+  - dnscrypt
+  - dnsmasq
+
+* system
+** systemd
+** acpi
+   - systemd-logind: =/etc/systemd/logind.conf=
+     simple
+   - acpid
+     more configurable
+     - example: only suspend when using battery on lid-close
+#+SRC_BEGIN bash
+    button/lid)
+        case "$3" in
+            close)
+                logger 'LID closed'
+		if grep 0 /sys/class/power_supply/AC/online; then
+		    systemctl suspend
+		fi
+		;;
+#+SRC_END
+** udev
