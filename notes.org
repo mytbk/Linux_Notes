@@ -5,7 +5,12 @@
 * keyboard layout
   - setxkbmap
   - xorg.conf
-  - tty: use localectl
+  - tty: loadkeys
+#+BEGIN_SRC bash
+loadkeys colemak
+loadkeys qwerty/us
+#+END_SRC
+  - use localectl from systemd
 
 * networking
   - dnscrypt
@@ -31,6 +36,6 @@
 #+END_SRC
 ** udev
    - usb power saving, except usb keyboard
-#+BEGIN_SRC
+#+BEGIN_SRC text
 ACTION=="add", SUBSYSTEM=="usb", ATTR{product}=="*Key*", ATTR{power/control}="on"
 #+END_SRC
