@@ -1,6 +1,7 @@
 #+TITLE: Linux Notes
 
 * git
+- squash commits: git rebase -i HEAD~n
 
 * keyboard layout
   - setxkbmap
