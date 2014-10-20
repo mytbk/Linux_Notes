@@ -1,6 +1,19 @@
 #+TITLE: Linux Notes
 
 * git
+  - git server
+    - on remote machine: 
+#+BEGIN_SRC bash
+  mkdir /path/to/project
+#+END_SRC
+    - on local machine: 
+#+BEGIN_SRC bash
+  git remote add ssh://user@host:port/path/to/project
+#+END_SRC
+
+* gdb
+  - remote debugging
+    in gdb, `target remote host:port'
 
 * keyboard layout
   - setxkbmap
