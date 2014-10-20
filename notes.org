@@ -1,15 +1,16 @@
 #+TITLE: Linux Notes
 
 * git
+  - squash commits: git rebase -i HEAD~n
   - git server
-    - on remote machine: 
-#+BEGIN_SRC bash
+    - on remote machine:
+  #+BEGIN_SRC bash
   mkdir /path/to/project
-#+END_SRC
-    - on local machine: 
-#+BEGIN_SRC bash
+  #+END_SRC
+    - on local machine:
+  #+BEGIN_SRC bash
   git remote add ssh://user@host:port/path/to/project
-#+END_SRC
+  #+END_SRC
 
 * gdb
   - remote debugging
@@ -18,7 +19,12 @@
 * keyboard layout
   - setxkbmap
   - xorg.conf
-  - tty: use localectl
+  - tty: loadkeys
+#+BEGIN_SRC bash
+loadkeys colemak
+loadkeys qwerty/us
+#+END_SRC
+  - use localectl from systemd
 
 * networking
   - dnscrypt
@@ -44,6 +50,6 @@
 #+END_SRC
 ** udev
    - usb power saving, except usb keyboard
-#+BEGIN_SRC
+#+BEGIN_SRC text
 ACTION=="add", SUBSYSTEM=="usb", ATTR{product}=="*Key*", ATTR{power/control}="on"
 #+END_SRC
