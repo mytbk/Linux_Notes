@@ -4,13 +4,13 @@
   - squash commits: git rebase -i HEAD~n
   - git server
     - on remote machine:
-  #+BEGIN_SRC bash
-  mkdir /path/to/project
-  #+END_SRC
+      #+BEGIN_SRC
+mkdir /path/to/project
+      #+END_SRC
     - on local machine:
-  #+BEGIN_SRC bash
-  git remote add ssh://user@host:port/path/to/project
-  #+END_SRC
+      #+BEGIN_SRC bash
+git remote add ssh://user@host:port/path/to/project
+      #+END_SRC
 
 * gdb
   - remote debugging
@@ -20,10 +20,10 @@
   - setxkbmap
   - xorg.conf
   - tty: loadkeys
-#+BEGIN_SRC bash
+    #+BEGIN_SRC bash
 loadkeys colemak
 loadkeys qwerty/us
-#+END_SRC
+    #+END_SRC
   - use localectl from systemd
 
 * networking
@@ -38,7 +38,7 @@ loadkeys qwerty/us
    - acpid
      more configurable
      - example: only suspend when using battery on lid-close
-#+BEGIN_SRC bash
+       #+BEGIN_SRC bash
     button/lid)
         case "$3" in
             close)
@@ -47,9 +47,9 @@ loadkeys qwerty/us
 		    systemctl suspend
 		fi
 		;;
-#+END_SRC
+       #+END_SRC
 ** udev
    - usb power saving, except usb keyboard
-#+BEGIN_SRC text
+     #+BEGIN_SRC text
 ACTION=="add", SUBSYSTEM=="usb", ATTR{product}=="*Key*", ATTR{power/control}="on"
-#+END_SRC
+     #+END_SRC
