@@ -1,0 +1,102 @@
+# ArchLinux Package Management
+
+
+* Package Management
+** Build and install from source
+#+begin_src text
+   ./configure
+   make
+   as-root make install
+#+end_src
+** How to manage packages
+*** All in My Hand
+*** Install in separate Directories
+*** Symlink Style
+#+begin_src text
+    ./configure --prefix=/usr
+    make
+    make DESTDIR=/usr/pkg/libfoo/1.1 install
+#+end_src
+*** Timestamp Based
+*** Tracing installation script
+*** Package archives
++ RPM, apt, Portage
++ tar based system
+*** User based
+
+* PKGBUILD, makepkg
+** PKGBUILD
+   A bash script that describes the package information
+and the way to build it.
+*** variables
+    pkgname, pkgver, depends, provides, conflicts
+*** functions
+    pkgver(), prepare(), build(), package()
+*** installation script
+** makepkg
+   Make an Arch package.
+** mkaurball
++ From community/pkgbuild-introspection
++ Make AUR tarball
+
+* pacman
+** File system based package management
+*** =/var/lib/pacman/sync/=
+    repository files, all tarballs
+*** =/var/lib/pacman/local/=
++ packages installed
++ All info in =/var/lib/pacman/local/$pkgname-$pkgver/=
+**** desc
+     Package description
+**** files
+     Files belong to the packages
+**** mtree
++ Begin in pacman-4.1.1
++ A feature from libarchive
++ help to check the integrity of a package
++ Generate mtree: =bsdtar -cf MTREE --format=mtree --options=all *=
+** Install and update packages: =pacman -S=
+   Issue =pacman -S <pkg>/<group>= to install a package,
+or a group of packages.
+*** Sync repositories: =pacman -Sy=
+    Use =pacman -Syy= for force sync repositories.
+*** Update all packages: =pacman -Su=
++ The most notable command: =pacman -Syu=
++ -uu option to force sync a package (to an old one)
+*** Search: =pacman -Ss=
+*** Detailed information: =pacman -Si=
+** Install a local package: =pacman -U=
+   Note that pacman has a cache directory =/var/cache/pacman/pkg/=
+** Query packages installed: =pacman -Q=
++ Detailed information: =pacman -Qi=
++ Only show package name (ignore version): =pacman -Qq=
+*** Search packages installed: =pacman -Qs=
+*** List files owned by a package: =pacman -Ql=
+*** Check integrity: =pacman -Qk=
++ And =pacman -Qkk= for a deep check
+** Remove packages: =pacman -R=
++ =pacman -Rc <pkgs>=: remove <pkgs> and packages depend on them
++ =pacman -Rs <pkgs>=: remove <pkgs> and packages they depend on
++ often use =pacman -Rcs <pkgs>=
+** Packages not from repositories: =pacman -Qm=
+* pacman utilities
+  Useful tools about Arch packages, some merged from pacman-contrib.
++ bacman: backup installed packages
++ pacdiff: deal with pacsave and pacnew files
++ pactree: list dependency tree of a package
++ extra/pkgfile: find the packages a certain file belongs to
+* AUR/yaourt
+** AUR: Arch user repository
+** yaourt: yet another user repository tool
+   A good wrapper for pacman
+* Create repos using repo-add
+* Configurations
+** pacman.conf
++ Configure pacman, add repositories, etc.
+** makepkg.conf
++ Set CFLAGS,CXXFLAGS, etc.
++ Use ccache,distcc to build packages
+
+* Open Build Service
+- From Novell
+- Support a lot of distributions
