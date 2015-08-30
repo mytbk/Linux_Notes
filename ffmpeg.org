@@ -1,0 +1,15 @@
+#+TITLE: FFMPEG
+
+* ffmpeg
+  - concatenate video
+    create a file list, like,
+    #+BEGIN_SRC text
+    file '1.flv'
+    file '2.flv'
+    #+END_SRC
+    then run command
+    #+BEGIN_SRC bash
+    ffmpeg -f concat -i filelist.txt -vcodec copy -acodec copy out.flv
+    #+END_SRC
+  - extract annexb H.264 stream
+    use =-vbsf h264_mp4toannexb=
