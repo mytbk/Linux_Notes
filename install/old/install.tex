@@ -1,0 +1,224 @@
+\documentclass{beamer}
+\usepackage[adobefonts,UTF8]{ctexcap}
+\usepackage{stmaryrd}
+\usepackage{amsmath}
+%\usepackage{multicol}
+
+\title{Linux Install Party}
+%\author{}
+%\date{\today}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}
+%\begin{multicols}{2}
+\tableofcontents[part=1]
+%\end{multicols}
+\end{frame}
+
+\begin{frame}
+\tableofcontents[part=2]
+\end{frame}
+
+\part{1}
+\section{准备工作}
+\begin{frame}{如何获取Linux}
+各Linux发行版的安装镜像都能在网上找到。为了便于发行，很多发行版在世界各地都有镜像源，镜像源中包含了该发行版的软件包和安装镜像。
+在教育网中，建议从镜像源下载Linux的安装镜像，常见的镜像源有：
+\begin{itemize}
+\item \url{http://mirrors.tuna.tsinghua.edu.cn}
+\item \url{http://mirrors.ustc.edu.cn}
+\item \url{http://mirrors.163.com}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{单系统，多系统，还是虚拟机？}
+	\begin{itemize}
+		\item	几乎所有能用计算机做的工作都可以在Linux下完成，因此，如果没特殊需求，可以直接用Linux单系统。
+		\item 不过还是有不少人选择保留原有的系统(Windows,Mac,不同的Linux发行版)，这时可以让多系统共存。
+		\item 使用虚拟机，可以让用户同时使用多个系统。可以在Linux下用虚拟机安装其他系统，
+			也可以在其他系统用虚拟机安装Linux.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\section{选择一个发行版}
+\subsection{我是新手}
+新手对Linux中的很多概念都不了解，有的甚至是刚接触电脑，这时应该用一个适合新手的发行版。
+\begin{itemize}
+\item Ubuntu: 很流行，但是经常被黑，主要问题是和上游关系不好，Unity桌面等。
+\item Fedora: 小白鼠发行版，常常瞻前不顾后，有的软件会出些问题。
+\item Redhat 9: 很多老Linux教程中提到的发行版，已经过时。
+\end{itemize}
+
+因此，我推荐的新手发行版是\ldots
+\end{frame}
+
+\begin{frame}{推荐新手使用的发行版}
+\begin{itemize}
+\item Deepin: 基于Ubuntu的国产发行版，非常适合国人使用，有独立开发的桌面环境，搜狗拼音输入法，QQ,迅雷等软件。
+\item openSUSE: 华丽的发行版，有最好的KDE桌面，系统配置工具强大，不错的文档和社区支持。
+\item Linux Mint: Debian系的发行版，常年排名靠前，有传统而又现代的Cinnamon桌面。
+\end{itemize}
+\end{frame}
+
+\subsection{中级用户}
+\begin{frame}{中级用户}
+如果已经有了一定的水平，想用一个定制性稍高的发行版，那么可以用下列发行版。
+\begin{itemize}
+\item Debian: 老牌发行版，稳定，拥有强大的包管理和配置工具。
+\item Arch: 崇尚极简主义，前卫的发行版，强大的文档和社区支持。
+\item Gentoo: 超高定制性的基于源码的发行版，拥有最强大的包管理器。
+\end{itemize}
+
+\end{frame}
+
+\subsection{高级用户}
+\begin{frame}{高级用户}
+如果你是高级用户，已经非常熟悉Linux,那就没必要来这里选发行版了\ldots
+\end{frame}
+
+\part{2}
+\section{安装方法}
+\begin{frame}{安装Linux}
+很多发行版都有一个图形化的安装程序，只要按照向导安装就能装好系统。
+我们这里要更深入地讨论系统的安装，了解其中的关键流程。
+\end{frame}
+
+\subsection{Debian,Arch,Gentoo的安装}
+\begin{frame}{使用debootstrap安装Debian}
+debootstrap可以用于创建一个基础的Debian系统，在很多发行版中都有此工具。用它安装Debian的大致流程如下：
+\begin{enumerate}
+\item 分区并挂载。
+\item 用debootstrap在目标根目录下做一个基础系统。
+\item chroot进去用apt安装内核和引导器(bootloader)。
+\item 配置fstab,设置root密码，把bootloader安装到磁盘的引导区，配置bootloader。
+\item 退出chroot环境，重新启动。
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{安装Arch}
+Arch的LiveCD中有一个install.txt,详细地讲解了安装方法。
+\begin{enumerate}
+\item 仍然是分区，挂载。
+\item 用pacstrap把base组的包全部装到目标根文件系统，其中包含基本工具和内核。
+\item 用pacstrap安装bootloader.
+\item 利用arch-chroot把bootloader安装到引导区，配置bootloader,设置root密码。
+\item 利用genfstab生成fstab.
+\item 重新启动。
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{安装Gentoo}
+按照Gentoo Handbook,Gentoo的安装方法大致如下：
+\begin{enumerate}
+\item 仍然是分区，挂载。
+\item 下载一份stage3,解压至目标根文件系统。
+\item 下载一份portage树，解压至目标的/usr下，并用emerge --sync同步portage树至最新。
+\item chroot进入目标系统。
+\item emerge一份内核源码，配置，编译，安装内核。
+\item emerge一份bootloader,并将其安装至引导区，配置bootloader。
+\item emerge其他常用的工具，用于连网，记录日志，执行计划任务等。
+\item 退出chroot并重启。
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{要点}
+从Debian,Arch,Gentoo的安装过程可以看出一些共同点：
+\begin{itemize}
+\item 都构建了一个基本系统(debootstrap,pacstrap,stage3).
+\item 使用了一个叫做chroot的手段。
+\end{itemize}
+
+什么叫做chroot(change root)?简单地说，就是让用户进入一个环境，其根目录为一个指定目录。
+\end{frame}
+
+\subsection{总结}
+\begin{frame}{安装Linux系统的关键是\ldots}
+\Huge 基本系统 + chroot \normalsize
+\end{frame}
+
+\subsection{常见问题}
+\begin{frame}{常见问题}
+\begin{itemize}
+\item chroot前请先挂载/proc,/dev,/sys
+\item 别忘了设置root密码及配置fstab
+\item 重启前请确认必要的包都装了，最好先配置好网络
+\end{itemize}
+\end{frame}
+
+\section{LiveUSB的制作}
+\begin{frame}{LiveUSB的制作}
+现在用光盘安装系统已经不流行了，对于可以自由下载的Linux发行版更是如此。以下介绍LiveUSB的制作方法。
+\end{frame}
+
+\subsection{直接写盘法}
+\begin{frame}{直接写盘法}
+这种方法是直接把ISO镜像写入U盘，然后电脑启动时会把U盘作为一个光盘启动。
+\begin{itemize}
+\item 常用工具为dd,简单粗暴。
+\item 写入ISO镜像后，U盘基本上就没别的用途了。
+\item 效果不好。
+\end{itemize}
+
+因此本人不推荐这种做法。
+\end{frame}
+
+\subsection{辅助工具法}
+\begin{frame}{辅助工具法}
+有一些工具可以利用LiveCD的ISO制作LiveUSB,效果还不错。
+常用的有UnetBootin, Universal USB installer, Linux Live USB Creater等，
+这类工具的使用很简单，按照工具的图形界面的提示制作就行了。
+\begin{itemize}
+\item 方法简单。
+\item 一般来说U盘无需格式化。
+\item 只能把一个ISO制作成LiveUSB,似乎也有多重启动U盘的制作工具。
+\end{itemize}
+\end{frame}
+
+\subsection{手工制作}
+\begin{frame}{手工制作}
+不借助LiveUSB制作工具，直接手工操作，可以打造出一个高度定制的LiveUSB.
+我们需要的，是一个引导器，常用的有syslinux,grub4dos,grub2
+
+ArchWiki上有手工制作Arch的LiveUSB的方法：
+\begin{enumerate}
+\item 把LiveCD里面的所有文件复制到U盘
+\item 安装syslinux到U盘，并给U盘的分区设定可引导标志
+\item 修改syslinux配置文件
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{制作LiveUSB的一般方法}
+手工制作LiveUSB的要点：
+\begin{itemize}
+\item 安装引导器
+\item 复制必要的文件
+\item 编写/修改配置文件
+\end{itemize}
+
+提示：
+\begin{itemize}
+\item 最重要的是要学会模仿，主要是iso镜像自身和各种工具生成的syslinux.cfg
+\item memdisk等小工具使用于小镜像
+\item 如果制作的LiveUSB出了问题，还是要看看相关文档
+\end{itemize}
+
+\end{frame}
+
+\section{其他}
+\begin{frame}{其他}
+一些安装中遇到的问题:
+\begin{itemize}
+\item 多系统共存
+\item UEFI和GPT分区表
+\item 虚拟机的使用
+\end{itemize}
+
+我们将在剩下的时间解决这些问题。
+\end{frame}
+
+\end{document} 
