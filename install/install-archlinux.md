@@ -7,11 +7,30 @@
 ### 准备工作
 首先，我们需要一个安装盘。
 
-我们可以从Arch Linux的[官方网站](https://www.archlinux.org/)下载用于安装Arch Linux的iso镜像。而为了加速，世界上有很多开源社区建立了开源镜像站，里面提供很多发行版的iso镜像及软件源。下面我们从中科大的开源镜像站([http://mirrors.ustc.edu.cn/](http://mirrors.ustc.edu.cn/))下载Arch Linux的iso.
+我们可以从Arch Linux的[官方网站](https://www.archlinux.org/)下载用于安装Arch Linux的iso镜像。而为了加速，世界上有很多开源社区建立了开源镜像站，里面提供很多发行版的iso镜像及软件源。下面我们从中科大的开源镜像站([http://mirrors.ustc.edu.cn/](http://mirrors.ustc.edu.cn/))下载Arch Linux的iso.在这里，我们下载2015.09版本的镜像，文件名为archlinux-2015.09.01-dual.iso.
+
+![USTC镜像站](img/01-download.png)
+![iso文件](img/02-download-2.png)
 
 下载了iso文件后，可以直接把这个文件刻录为光盘。现在很多的机器已经没有光驱了，因此我们要把它做成USB启动盘。以后我会讲解在Linux下制作启动盘的方法，考虑到很多人还在用Windows系统，因此接下来我们将要用[Rufus](https://rufus.akeo.ie/)制作启动盘。
 
+首先下载Rufus.Rufus不需要安装，直接打开就能看到主界面。插入U盘之后，可以看到Rufus可以识别出U盘。Rufus有很多设置项，其中有一项叫“新卷标”，这一项要正确地填写，因为Arch的安装镜像启动时默认根据卷标判断启动所需文件的位置。我们可以先在Windows中挂载下载下来的iso文件，如果你所用的Windows版本没有虚拟光驱功能，可以安装[ImDisk](http://www.ltr-data.se/opencode.html/#ImDisk)后用它挂载iso.
 
+![mount iso](img/03-mount.png)
+
+可以看到，镜像的名字叫做`ARCH_201509`.接着，我们在Rufus的“新卷标”处填写`ARCH_201509`，分区方案选择“用于BIOS或MBR计算机的UEFI分区方案”(似乎翻译有问题，应该是用于BIOS和UEFI的MBR方案，大家可以回忆一下关于[系统固件](from-firmware-to-userspace.md#固件firmware)的内容。)，其他都用默认配置。然后在“创建一个启动盘使用”那里，右边有个光盘的图标，点击并选择下载下来的iso文件。最后点“开始”制作启动U盘。
+
+![Rufus](img/04-rufus.png)
+
+接着Rufus会提示下载syslinux，选择“是”。
+
+![syslinux](img/05-dlsyslinux.png)
+
+然后提示选择写盘模式，我们使用推荐的ISO模式。
+![isohybrid](img/06-hybridiso.png)
+
+最后有个格式化的警告，点击确定，即可格式化U盘并制作启动盘。
+![format](img/07-format.png)
 
 ### 启动系统
 制作好了安装盘之后，可以用这个安装盘启动系统了。启动之后，我们要先做一些安装前的准备工作。
