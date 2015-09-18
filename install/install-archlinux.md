@@ -56,14 +56,115 @@ nameserver 192.168.0.1
 * 无线网络: Arch Linux的安装盘提供一个叫`wifi-menu`的工具，执行`wifi-menu`,选择要连接的无线热点，根据提示输入密码即可。
 
 #### 选择镜像源
+Arch Linux是通过网络进行安装的，为了以更快的速度下载软件包，建议先配置镜像源。配置镜像源的方法是编辑`/etc/pacman.d/mirrorlist`这个文件，将想用的镜像源的放到第一个非井号开头的行即可。如下可将中科大镜像源作为首选镜像源。
+```
+# /etc/pacman.d/mirrorlist
+# This is the USTC mirror
+Server = http://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
+
+# and other mirrors
+## Score: 4.6, China
+Server = http://mirrors.163.com/archlinux/$repo/os/$arch
+# ...
+```
+
+配置完成后可以执行`pacman -Syy`试一下，可以看一下pacman从镜像站下载文件的速度。
 
 ### 安装系统
+进行准备工作之后，就可以装系统了。我们会把需要的文件(包括内核)安装至磁盘，随后安装引导加载器，这样就完成了一个可启动系统的安装。
 
 #### 分区
+为了把系统安装到硬盘上，我们需要对硬盘进行分区。如果对分区和文件系统的概念不了解的话，先学习一些基础知识吧。
+* [分区和文件系统](fs-partition.md)
 
-#### 挂载分区
+考虑到现在很多的机器都使用了UEFI固件和相应的启动方式，因此我们使用UEFI标准中推荐的GPT分区表。Linux下的GPT分区工具是gdisk.
+
+为了方便，我们在这里分3个区，挂载点和功能如下：  
+1. /boot: 我们把EFI系统分区挂载到/boot下，从而Arch Linux可以把内核安装在EFI系统分区中，便于一些引导加载器加载内核。一般来说，这个分区给200M就够了。  
+2. /: 根文件系统，系统文件都放在这个分区中，我们给它分个50G，这样可以多装软件。事实上，对于不用大型应用的用户，10G就够了。  
+3. /home: 存放用户文件用，硬盘上的剩余空间都放在这里。
+
+对于内存小的机器，建议多分一个和内存大小相当的分区作为交换分区。在这里，为了方便，我们就不要这个分区了。
+
+我们开始用gdisk分区。一般来说，对于只有一个硬盘的机器，硬盘为`/dev/sda`.于是我们执行`gdisk /dev/sda`.
+
+在gdisk中，有一个提示符，输入命令后回车就能让gdisk执行相应操作。h命令可以查看gdisk的使用说明，p命令可以列出磁盘的分区状况。
+
+我们现在把手上的硬盘重新分区，首先用o命令，它可以在硬盘上建立一个新的GPT分区表。
+
+>
+```
+Command (? for help): o
+This option deletes all partitions and creates a new protective MBR.
+Proceed? (Y/N): Y
+```
+
+接着执行n命令，建立一个分区。按照如下方法，即可建立一个200M的，类型为'EFI System'的分区(用它作为EFI分区)，分区号为1.
+
+> ```
+> Command (? for help): n
+> Partition number (1-128, default 1):
+> First sector (34-10485726, default = 2048) or {+-}size{KMGTP}:
+> Last sector (2048-10485726, default = 10485726) or {+-}size{KMGTP}: +200M
+> Current type is 'Linux filesystem'
+> Hex code or GUID (L to show codes, Enter = 8300): ef00
+> Changed type of partition to 'EFI System'
+> ```
+
+执行p可以看到：
+
+> ```
+> Number  Start (sector)    End (sector)  Size       Code  Name
+>    1            2048          411647   200.0 MiB   EF00  EFI System
+> ```
+
+同理可以建立我们想建的剩下两个分区，注意到提示'Hex code or GUID'时，我们使用默认的8300就行了，它表示的类型为'Linux filesystem'，这个是Linux系统的分区的默认类型。而'Last sector'那个提示用默认回答时，则表示使用硬盘后面的分区之前的所有空间(后面没有分区时则是用完所有的硬盘空间).
+
+分区完成之后可以执行p看看效果，确认没有错误后执行w保存退出。
+
+#### 格式化，挂载分区
+分区是把硬盘分成了几个单独的部分，但是那些单独的分区需要一定的结构才能使用，因此需要格式化这些分区。我们一个一个分区地来吧。
+
+首先是/dev/sda1.这个分区时EFI分区，按照标准，使用FAT32文件系统，我们执行`mkfs.vfat /dev/sda1`格式化。
+
+接着是/dev/sda2.我们使用比较常用的ext4文件系统，执行`mkfs.ext4 /dev/sda2`格式化。
+
+最后是/dev/sda3.我们使用xfs文件系统，和上面的方法类似，执行`mkfs.xfs /dev/sda3`即可。
+
+格式化之后的分区就可以使用了。我们暂时把整个文件系统挂载在/mnt下，这样把文件放到/mnt下就可以把文件写入硬盘。在挂载的过程中，要注意按照挂载点的层次按顺序挂载，先挂载最顶层的/.
+```
+mount /dev/sda2 /mnt
+```
+
+接着挂载/boot和/home,注意要先建立目录才能挂载。
+```
+install -d /mnt/{boot,home}
+mount /dev/sda1 /mnt/boot
+mount /dev/sda3 /mnt/home
+```
+
+就这样，我们的硬盘的每个分区都挂载到了/mnt及其子目录下，往其中写文件就是往硬盘写文件。而且往/mnt/boot写入的文件都会写到/dev/sda1这个分区，往/mnt/home写入的文件都会写到/dev/sda3这个分区，往其他目录写入的文件都会写到/mnt/sda2这个分区，这就是分区和挂载点的对应关系。
 
 #### 软件安装
+安装Arch Linux的软件很简单，执行下面这条命令就行了：
+```
+pacstrap /mnt
+```
+
+考虑到不少用户需要使用无线上网功能，我们安装networkmanager：
+```
+pacstrap /mnt networkmanager
+```
+
+还有常用的开发工具最好也装上：
+```
+pacstrap /mnt base-devel
+```
+
+以上三类软件可以用一条命令进行安装(`pacstrap /mnt`相当于`pacstrap /mnt base`)：
+```
+pacstrap /mnt base base-devel networkmanager
+```
 
 #### chroot
 
