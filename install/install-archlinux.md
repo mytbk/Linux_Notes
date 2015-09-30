@@ -167,12 +167,55 @@ pacstrap /mnt base base-devel networkmanager
 ```
 
 #### chroot
+做完了上面的工作之后，我们已经把Linux内核和需要的用户程序都安装到硬盘里面了。在安装bootloader之前，我们先了解一个叫做chroot的操作。
+
+我们已经知道，文件系统是一个树形结构，它有一个根目录/,每个文件路径都可以从/一步一步走下去找到。而chroot的功能就是把一个进程(及其子进程)的根目录改为指定的路径，这样这个进程找一个文件时，便会从chroot指定的目录开始查找。
+
+在这里，我们chroot到已经安装好的那个文件系统里面，这样就很容易对我们新安装的系统进行操作了。
+
+一般来说，为了在进入新的文件系统后仍可以方便地操作内核，要挂载/proc,/dev,/sys到新的文件系统中。Arch的安装工具中提供了一个叫`arch-chroot`的脚本，它封装了这些操作，简化了chroot的过程。
+
+现在我们执行`arch-chroot /mnt`，这样就以chroot的方式进入了新的系统。
 
 #### bootloader
+我们用的是UEFI的启动方式，对此我们使用gummiboot作为bootloader.gummiboot可以直接引导Linux内核，可以加载其他的EFI程序，从而可以引导其他系统，加载其他的bootloader或者执行一些特殊的EFI应用。
+
+最新的systemd里面已经有一份gummiboot的安装程序，我们用它把gummiboot程序安装到EFI分区里面。
+
+在chroot里面，执行`bootctl install`.接着可以看到安装过程的信息，bootctl程序把gummiboot安装到了/boot/EFI/Boot/BOOTX64.EFI并且添加了一条EFI启动项。
+
+**注意: 有的UEFI实现支持添加EFI启动项，但是有的只支持默认路径efi/boot/bootx64.efi.因此bootctl在添加启动项的同时把文件安装到efi/boot/bootx64.efi是个稳妥的做法。**
+
+接下来要配置gummiboot.我们创建并编辑/boot/loader/entries/archlinux.conf.
+```
+title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options root=/dev/sda2 ro
+```
+
+它的意思是创建一个标题为Arch Linux的启动项，它用bootloader所在分区(/dev/sda1)根目录下的vmlinuz-linux作为Linux内核，initramfs-linux.img作为initramfs镜像(可以认为是一个临时rootfs镜像)，并且用`root=/dev/sda2 ro`作为内核参数。
+
+再编辑/boot/loader/loader.conf.
+```
+timeout 3
+default archlinux
+```
+
+意思是默认用archlinux.conf的配置启动，等待3秒没有键盘操作即使用默认配置启动。
 
 #### 配置系统
+现在系统启动需要的几个部件都装好了，剩下的是配置一下系统。
+
+首先，我们要设置root密码，不然重启后就进不了系统了。在chroot环境下执行`passwd`,按要求输入两次密码即可。
+
+然后是生成/etc/fstab文件，它的作用是指示init程序挂载分区到指定的挂载点。我们先执行exit或者按Ctrl-D退出chroot环境，然后执行`genfstab -U /mnt | tee /mnt/etc/fstab`,然后我们可以在终端上看到生成的fstab内容，并且这些内容已经写入/mnt/etc/fstab中了。
+
+*tee的作用是在终端打印输入内容的同时写文件。这里用到了shell的管道(|符号)，它的作用是把|之前的命令的输出作为|后面命令的输入。*
+
+*此外，genfstab的-U参数表示在fstab中用UUID表示分区。而之前在gummiboot配置中用/dev/sda2表示sda的第二个分区，是种比较简便的方法，但容易混乱。在多硬盘的情形下建议用UUID，内核命令行中可以写root=UUID=uuid-of-partition.*
 
 ### 重新启动
 如果你一步一步地走到了这里，恭喜你，Arch Linux系统已经安装在你的机器上了。重新启动看看效果吧。
 
-在终端下执行`reboot`命令，即可重新启动系统。然后，如果你看到了一个启动菜单，那就是GRUB的界面，接着系统启动，最后出现一个登陆提示，说明你已经安装成功了！
+在退出了chroot环境之后，在终端下执行`reboot`命令，即可重新启动系统。然后，如果你看到了一个启动菜单，那就是gummiboot的界面，接着系统启动，最后出现一个登陆提示，说明你已经安装成功了！
