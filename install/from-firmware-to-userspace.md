@@ -23,8 +23,8 @@ BIOS起源于IBM PC,并一直沿用到现在。BIOS引导系统的过程如下�
 
 3. 跳转到0000:7c00执行引导代码。
 
-#### UEFI(universal extended firmware interface)
-UEFI是Intel提出的固件结构，起初用于Intel的IA64平台，后来移植到了x86和x86_64平台，同时也有ARM设备使用UEFI.
+#### UEFI(Unified Extensible Firmware Interface)
+[UEFI](http://www.uefi.org/)是Intel提出的固件结构，起初用于Intel的IA64平台，后来移植到了x86和x86_64平台，同时也有ARM设备使用UEFI.
 
 UEFI规范中指定了UEFI固件的结构，编程规范，也规定了引导系统的方式。UEFI固件引导系统的过程如下：
 
