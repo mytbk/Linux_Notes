@@ -1,5 +1,10 @@
 #+TITLE: Linux Notes
 
+* bash
+  - http://www.tldp.org/LDP/abs/html/string-manipulation.html
+    - get a substring: ${VAR:pos:length}
+    - remove from left/right: ${VAR#substring} ${VAR%substring}
+
 * git
   - squash commits: git rebase -i HEAD~n
   - git server
