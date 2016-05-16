@@ -13,3 +13,4 @@
     #+END_SRC
   - extract annexb H.264 stream
     use =-vbsf h264_mp4toannexb=
+  - [vaapi encoding](https://ffmpeg.org/pipermail/ffmpeg-user/2016-May/032153.html)
