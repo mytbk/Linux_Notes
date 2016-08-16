@@ -1,6 +1,8 @@
 自由中文字体
 ============
 
+[DebianHK](http://wiki.debian.org.hk/w/Fonts)有一页关于字体的wiki.
+
 文鼎字体
 --------
 
@@ -22,9 +24,9 @@
 Droid fonts
 -----------
 
-[Droid fonts](http://www.droidfonts.com/)由Ascender Corporation的Steve Matteson设计。[部分字体以Apache License发布。][for-devel]在Wikipedia上可以找到[Github链接](https://github.com/android/platform_frameworks_base/tree/master/data/fonts)。
+[Droid fonts](http://www.droidfonts.com/)由Ascender Corporation的Steve Matteson设计。[部分字体以Apache License发布，其他字体则是私有的。][for-devel]在Wikipedia上可以找到[Github链接](https://github.com/android/platform_frameworks_base/tree/master/data/fonts)。
 
-根据我的使用经验，似乎只有Droid Sans Fallback支持中文。
+只有Droid Sans Fallback支持中文。
 
 [for-devel]: http://www.droidfonts.com/droidfonts/customversions/
 
