@@ -5,7 +5,7 @@
 
 此前我用的是 OpenVPN. 但是它配置麻烦，用 easy-rsa 生成密钥的操作也十分繁琐。此外，OpenVPN 已经被安全研究人员进行了流量分析研究，因此用 OpenVPN 进行安全上网还很容易被切断连接。此前我还试用过 tinc，配置简单一些，但是却有一些奇怪的问题让我没法用它安全上网，最后就没再使用。
 
-`WireGuard <https://www.wireguard.io/>`_ 是 2017 年兴起的一个 VPN 软件，它在 Linux 内核的基础上构建，直接使用 Linux 内核中的网络功能，可以用 iproute2 等工具对 VPN 的网络接口进行操作。它使用 Curve25519, Chacha20-Poly1305, Blake2 等先进而高效的密码学算法，安全性好，CPU 要求低。此外，它也提供预共享密钥的设置以抵抗量子计算机的攻击。
+`WireGuard <https://www.wireguard.io/>`_ 是 2017 年兴起的一个 VPN 软件，它在 Linux 内核的基础上构建，直接使用 Linux 内核中的网络功能，可以用 iproute2 等工具对 VPN 的网络接口进行操作。它使用 Curve25519, ChaCha20-Poly1305, BLAKE2 等先进而高效的密码学算法，安全性好，CPU 要求低。此外，它也提供预共享密钥的设置以抵抗量子计算机的攻击。
 
 WireGuard 提供 wg(8) 工具以配置 WireGuard 网络接口，此外还提供了 wg-quick(8) 脚本来实现设置 IP 地址，设置路由表等功能。
 
